@@ -1,6 +1,5 @@
 decorator==5.0.9
-networkx==2.5
-matplotlib==2.2.3
+networkx==2.6.3
 nltk==3.6.1
 numpy==1.20.1
-sklearn==0.24.1
+scikit-learn==0.24.1
