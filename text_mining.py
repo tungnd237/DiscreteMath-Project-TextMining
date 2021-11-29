@@ -7,7 +7,7 @@ import nltk
 
 def read_text_file(file_path):
     with open(file_path, "r") as f:
-        return f.read().encode('latin1').decode('utf16')
+        return f.read()#.encode('latin1').decode('utf16')
 
 ### function
 
