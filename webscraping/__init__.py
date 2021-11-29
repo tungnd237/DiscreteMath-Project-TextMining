@@ -1,10 +1,12 @@
 from scrapy.crawler import CrawlerProcess
-from crawler.spiders.vnexpress import VnexpressSpider
+from webscraping.crawler.spiders.vnexpress import VnexpressSpider
 
-fileVariable = open(r'data/vnexpress.csv', 'r+')
-fileVariable.truncate(0)
-fileVariable.close()
+def crawl_data():
 
-process = CrawlerProcess()
-process.crawl(VnexpressSpider)
-process.start(stop_after_crawl=True)
+    fileVariable = open(r'webscraping/data/vnexpress.csv', 'r+')
+    fileVariable.truncate(0)
+    fileVariable.close()
+
+    process = CrawlerProcess()
+    process.crawl(VnexpressSpider)
+    process.start(stop_after_crawl=True)

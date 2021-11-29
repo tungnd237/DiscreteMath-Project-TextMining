@@ -45,7 +45,7 @@ class VnexpressSpider(scrapy.Spider):
     start_urls = get_urls(pages=1)
 
     def parse(self, response):
-        with open("data/vnexpress.csv", "a", encoding='utf-8') as dataset:
+        with open("webscraping/data/vnexpress.csv", "a", encoding='utf-8') as dataset:
             writer = csv.writer(dataset)
             header = ['category','url', 'title', 'text']
             writer.writerow(header)
