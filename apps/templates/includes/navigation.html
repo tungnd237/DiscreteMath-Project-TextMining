@@ -12,10 +12,6 @@
         <div class="collapse navbar-collapse me-md-0 me-4" id="navbar">
           <ul class="navbar-nav mb-2 mb-sm-0 ms-sm-auto justify-content-sm-end">
             <li class="nav-item d-flex align-items-center">
-              <a href="{% url 'logout' %}" 
-                 class="nav-link text-body text-uppercase font-weight-bold px-0">
-                Logout
-              </a>
             </li>
             <li class="nav-item d-xl-none ps-4 d-flex align-items-center">
               <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
@@ -110,6 +106,10 @@
           <div class="bg-white border-radius-lg d-flex">
             <input type="text" class="form-control border-0 ps-3" placeholder="Type here...">
             <button class="btn bg-gradient-primary my-1 me-1">Search</button>
+            <form action = "run_text_mining.py" method = "POST">
+                <input type = "submit">
+            </form>
+</form>
           </div>
         </div>
     </div>
