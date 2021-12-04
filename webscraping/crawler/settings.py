@@ -87,7 +87,7 @@ COOKIES_ENABLED = False
 # Enable or disable spider middlewares
 # See https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'crawler.middlewares.CrawlerSpiderMiddleware': 543,
+    #'crawler.middlewares.CrawlerSpiderMiddleware': 543,
 #}
 
 # PROXY
@@ -118,8 +118,8 @@ COOKIES_ENABLED = False
 
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'crawler.pipelines.CrawlerPipeline': 300,
+#TEM_PIPELINES = {
+    #'crawler.pipelines.CrawlerPipeline': 300,
 #}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -142,3 +142,5 @@ COOKIES_ENABLED = False
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+CLOSESPIDER_ITEMCOUNT = 10
+CONCURRENT_REQUESTS = 1

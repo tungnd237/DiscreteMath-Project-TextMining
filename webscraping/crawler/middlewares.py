@@ -64,8 +64,10 @@ class CrawlerDownloaderMiddleware(object):
     @classmethod
     def from_crawler(cls, crawler):
         # This method is used by Scrapy to create your spiders.
+        #settings = crawler.settings
         s = cls()
         crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
+        #settings = crawler.settings
         return s
 
     def process_request(self, request, spider):
