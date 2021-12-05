@@ -88,7 +88,6 @@ def build_graph(df, stopword):
                 graph.add_edge(i, j, weight=w)
 
     # print title and postition
-    print(labeldict)
     return graph
 
 
@@ -169,7 +168,7 @@ def algo(graph):
 
 # use graph theory to remove similar content
 def remove_similar(df, stopword, plot_original=False,
-                   plot_result=False, **kwargs):
+                   plot_result=False,**kwargs):
     # tokenization
     df = add_wordlist(df, stopword, **kwargs)
 
@@ -196,6 +195,17 @@ def remove_similar(df, stopword, plot_original=False,
             else:
                 nodecolor.append(0)
 
+        for i in graph.nodes:
+            if i not in result:
+                labeldict.pop(i)
+
+        exist = []
+        for i in range(len(df['title'])):
+            if df['title'][i] in labeldict.values():
+                if df['title'][i]not in exist:
+                    exist.append(df['title'][i])
+                    print(df['title'][i], df['url'][i])
+
         nodesize = []
         for i in graph.nodes:
             if i in result:
@@ -205,6 +215,7 @@ def remove_similar(df, stopword, plot_original=False,
 
         plot_graph(graph, position=pos, nodecolor=nodecolor,
                    nodesize=nodesize, title='Graph Theory Result', **kwargs)
+
 
     # exclusive content may share no common words with others
     # we still need the last puzzle to get the output

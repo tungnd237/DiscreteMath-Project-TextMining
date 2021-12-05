@@ -30,8 +30,8 @@ webscraping.crawl_data()
 
 df = pd.read_csv(r'webscraping/data/vnexpress.csv', encoding = "utf8")
 
-df_title = df['title'].copy().dropna()
-df_title = df_title.to_frame()
+df_title = df.copy().dropna()
+# df_title = df_title.to_frame()
 df_title = df_title[df_title.title != "title"]
 
 ### stopword vietnam
