@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import os
 import nltk
+import csv
 
 
 def read_text_file(file_path):
@@ -103,7 +104,7 @@ def plot_graph(graph, position, nodecolor=[], nodesize=[],
     ax = plt.figure(figsize=(20, 10)).add_subplot(111)
 
     nx.draw(graph, node_size=nodesize, pos=position,
-            node_color=nodecolor, cmap=nodecmap,labels = labeldict, with_labels=True, **kwargs)
+            node_color=nodecolor, cmap=nodecmap, with_labels=True, **kwargs)
 
     # remove axes
     ax.spines['top'].set_visible(False)
@@ -199,19 +200,28 @@ def remove_similar(df, stopword, plot_original=False,
             if i not in result:
                 labeldict.pop(i)
 
+        def find_key(val):
+            for key, value in labeldict.items():
+                if val == value:
+                    return key
         exist = []
-        for i in range(len(df['title'])):
-            if df['title'][i] in labeldict.values():
-                if df['title'][i]not in exist:
-                    exist.append(df['title'][i])
-                    print(df['title'][i], df['url'][i])
+        with open('Results.csv', 'w', encoding='UTF16', newline='') as f:
+            writer = csv.writer(f)
+            for i in range(len(df['title'])):
+                if df['title'][i] in labeldict.values():
+                    if df['title'][i]not in exist:
+                        exist.append(df['title'][i])
+                        print(find_key(df['title'][i]),df['title'][i], df['url'][i])
+                        data = [find_key(df['title'][i]),df['title'][i], df['url'][i]]
+                        writer.writerow(data)
+
 
         nodesize = []
         for i in graph.nodes:
             if i in result:
-                nodesize.append(700)
+                nodesize.append(400)
             else:
-                nodesize.append(300)
+                nodesize.append(200)
 
         plot_graph(graph, position=pos, nodecolor=nodecolor,
                    nodesize=nodesize, title='Graph Theory Result', **kwargs)
