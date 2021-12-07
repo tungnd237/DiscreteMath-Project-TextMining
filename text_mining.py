@@ -122,6 +122,7 @@ def plot_graph(graph, position, nodecolor=[], nodesize=[],
     plt.yticks([])
     plt.title(title, fontsize=15)
     plt.savefig("apps/static/assets/img/ouput.jpg")
+    plt.show()
 
 #for some titles, they may not share any common words with others
 #in another word, they are not included in the graph structure
