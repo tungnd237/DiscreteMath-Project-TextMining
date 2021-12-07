@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import os
 import nltk
+import csv
 
 def read_text_file(file_path):
     with open(file_path, "r") as f:
@@ -71,54 +72,56 @@ def add_wordlist(df,stopword,**kwargs):
 #thus, we have to use dataframe index as the node name
 #we only connect two nodes if they share common words (exclude stopword)
 #we set the number of common words as the weight of the edge
-def build_graph(df,stopword):
+labeldict = {}
 
-    graph=nx.Graph()
+def build_graph(df, stopword):
+    graph = nx.Graph()
 
     for i in range(len(df)):
-        for j in range(i+1,len(df)):
-            w=find_common(df['word'][i],df['word'][j],stopword)
-            if w!=0:
-                graph.add_edge(i,j,weight=w)
+        for j in range(i + 1, len(df)):
+            w = find_common(df['word'][i], df['word'][j], stopword)
+            if w != 0:
+                labeldict[i] = df['title'][i]
+                labeldict[j] = df['title'][j]
+                graph.add_edge(i, j, weight=w)
 
+    # print title and postition
     return graph
 
-#plotting the graph structure
-def plot_graph(graph,position,nodecolor=[],nodesize=[],
-               nodecmap=plt.cm.copper,title=None,colorbartitle=None,
-               plot_colorbar=False,**kwargs):
-
+# plotting the graph structure
+def plot_graph(graph, position, nodecolor=[], nodesize=[],
+               nodecmap=plt.cm.copper, title=None, colorbartitle=None,
+               plot_colorbar=False, **kwargs):
     if not nodecolor:
-        nodecolor=[0]*len(graph)
+        nodecolor = [0] * len(graph)
     if not nodesize:
-        nodesize=300
+        nodesize = 200
 
-    ax=plt.figure(figsize=(20,10)).add_subplot(111)
+    ax = plt.figure(figsize=(20, 10)).add_subplot(111)
 
-    nx.draw(graph,node_size=nodesize,pos=position,
-            node_color=nodecolor,cmap=nodecmap,**kwargs)
+    nx.draw(graph, node_size=nodesize, pos=position,
+            node_color=nodecolor, cmap=nodecmap, with_labels=True, **kwargs)
 
-    #remove axes
+    # remove axes
     ax.spines['top'].set_visible(False)
     ax.spines['bottom'].set_visible(False)
     ax.spines['left'].set_visible(False)
     ax.spines['right'].set_visible(False)
 
-    #plot colorbar for node color
+    # plot colorbar for node color
     if plot_colorbar:
-        sm=plt.cm.ScalarMappable(cmap=nodecmap,
-                                 norm=plt.Normalize(vmin=min(nodecolor),
-                                                    vmax=max(nodecolor)))
-        sm._A=[]
-        cb=plt.colorbar(sm,ticks=[min(nodecolor),max(nodecolor)])
+        sm = plt.cm.ScalarMappable(cmap=nodecmap,
+                                   norm=plt.Normalize(vmin=min(nodecolor),
+                                                      vmax=max(nodecolor)))
+        sm._A = []
+        cb = plt.colorbar(sm, ticks=[min(nodecolor), max(nodecolor)])
         cb.ax.set_yticklabels(cb.ax.get_yticklabels(), fontsize=11)
-        cb.ax.set_ylabel(colorbartitle,fontsize=11,rotation=270)
+        cb.ax.set_ylabel(colorbartitle, fontsize=11, rotation=270)
 
     plt.xticks([])
     plt.yticks([])
-    plt.title(title,fontsize=15)
-    plt.savefig("apps/static/assets/img/output.jpg")
-
+    plt.title(title, fontsize=15)
+    plt.show()
 
 #for some titles, they may not share any common words with others
 #in another word, they are not included in the graph structure
@@ -160,52 +163,71 @@ def algo(graph):
     return result
 
 #use graph theory to remove similar content
-def remove_similar(df,stopword,plot_original=False,
-                    plot_result=False,**kwargs):
+def remove_similar(df, stopword, plot_original=False,
+                   plot_result=False,**kwargs):
+    # tokenization
+    df = add_wordlist(df, stopword, **kwargs)
 
-    #tokenization
-    df=add_wordlist(df,stopword,**kwargs)
+    # graph building
+    graph = build_graph(df, stopword, **kwargs)
 
-    #graph building
-    graph=build_graph(df,stopword,**kwargs)
+    # fix node position for visual comparison
+    pos = nx.spring_layout(graph, k=0.3)
 
-    #fix node position for visual comparison
-    pos=nx.spring_layout(graph,k=0.3)
-
-    #plot original
+    # plot original
     if plot_original:
-        plot_graph(graph,position=pos,
-                   title='Original',**kwargs)
+        plot_graph(graph, position=pos,
+                   title='Original', **kwargs)
 
-    #traversal
-    result=algo(graph)
+    # traversal
+    result = algo(graph)
 
-    #plot result, highlight the result
+    # plot result, highlight the result
     if plot_result:
-        nodecolor=[]
+        nodecolor = []
         for i in graph.nodes:
             if i in result:
                 nodecolor.append(1)
             else:
                 nodecolor.append(0)
 
-        nodesize=[]
+        for i in graph.nodes:
+            if i not in result:
+                labeldict.pop(i)
+
+        def find_key(val):
+            for key, value in labeldict.items():
+                if val == value:
+                    return key
+        exist = []
+        with open('Results.csv', 'w', encoding='UTF16', newline='') as f:
+            writer = csv.writer(f)
+            for i in range(len(df['title'])):
+                if df['title'][i] in labeldict.values():
+                    if df['title'][i]not in exist:
+                        exist.append(df['title'][i])
+                        print(find_key(df['title'][i]),df['title'][i], df['url'][i])
+                        data = [find_key(df['title'][i]),df['title'][i], df['url'][i]]
+                        writer.writerow(data)
+
+
+        nodesize = []
         for i in graph.nodes:
             if i in result:
-                nodesize.append(700)
+                nodesize.append(400)
             else:
-                nodesize.append(300)
+                nodesize.append(200)
 
-        plot_graph(graph,position=pos,nodecolor=nodecolor,
-                   nodesize=nodesize,title='Graph Theory Result',**kwargs)
+        plot_graph(graph, position=pos, nodecolor=nodecolor,
+                   nodesize=nodesize, title='Graph Theory Result', **kwargs)
 
-    #exclusive content may share no common words with others
-    #we still need the last puzzle to get the output
-    output=add_non_connected(df,result,graph)
 
-    #return the selected nodes in a dataframe format
-    data=df.loc[[i for i in set(output)]]
-    data.reset_index(inplace=True,drop=True)
+    # exclusive content may share no common words with others
+    # we still need the last puzzle to get the output
+    output = add_non_connected(df, result, graph)
+
+    # return the selected nodes in a dataframe format
+    data = df.loc[[i for i in set(output)]]
+    data.reset_index(inplace=True, drop=True)
     del data['word']
-
-    return data,pos
+    return data, pos

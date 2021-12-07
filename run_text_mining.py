@@ -28,10 +28,20 @@ stopwords = config.STOPWORDS
 
 webscraping.crawl_data()
 
-df = pd.read_csv(r'webscraping/data/vnexpress.csv', encoding = "utf8")
+df_vnexpress = pd.read_csv(r'webscraping/data/vnexpress.csv', encoding = "utf8")
+df_laodong = pd.read_csv(r'webscraping/data/laodong.csv', encoding = "utf8")
 
-df_title = df['title'].copy().dropna()
-df_title = df_title.to_frame()
+list_df = []
+
+for i in df_vnexpress['category'].unique():
+    if i != 'category':
+        list_df.append(df_vnexpress[['title', 'url']][df_vnexpress.category == i].iloc[:15].copy())
+
+list_df.append(df_laodong[df_laodong.title != 'title'][['title', 'url']])#.sample(50))
+
+df_title = pd.concat(list_df, axis = 0)
+df_title = df_title.dropna()
+df_title = df_title.reset_index(drop = True)
 df_title = df_title[df_title.title != "title"]
 
 ### stopword vietnam
@@ -39,6 +49,6 @@ f = open(stopwords, 'r',encoding="utf8")
 stopword_vn = f.read().split('\n')
 
 ### Run graph
-df_sample = df_title.sample(100, replace = True)
-df_sample = df_sample.reset_index(drop=True)
-output,position=tm.remove_similar(df_sample,stopword_vn,plot_original=True,plot_result=True)
+#df_sample = df_title.sample(100, replace = True)
+#df_sample = df_sample.reset_index(drop=True)
+output,position=tm.remove_similar(df_title,stopword_vn,plot_original=True,plot_result=True)
