@@ -16,7 +16,7 @@ def crawl_data():
 
     with open("webscraping/data/laodong.csv", "a", encoding='utf-8') as dataset:
         writer = csv.writer(dataset)
-        header = ['title', 'text']
+        header = ['title', 'url']
         writer.writerow(header)
 
     process = CrawlerProcess()

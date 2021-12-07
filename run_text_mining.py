@@ -35,17 +35,14 @@ list_df = []
 
 for i in df_vnexpress['category'].unique():
     if i != 'category':
-        list_df.append(df_vnexpress['title'][df_vnexpress.category == i].iloc[:15].copy())
+        list_df.append(df_vnexpress[['title', 'url']][df_vnexpress.category == i].iloc[:15].copy())
 
-list_df.append(df_laodong[df_laodong.title != 'title']['title'].sample(50))
+list_df.append(df_laodong[df_laodong.title != 'title'][['title', 'url']])#.sample(50))
 
 df_title = pd.concat(list_df, axis = 0)
 df_title = df_title.dropna()
-df_title = df_title.to_frame().reset_index(drop = True)
+df_title = df_title.reset_index(drop = True)
 df_title = df_title[df_title.title != "title"]
-
-for i in df_title:
-    print(i)
 
 ### stopword vietnam
 f = open(stopwords, 'r',encoding="utf8")
