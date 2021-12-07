@@ -18,7 +18,7 @@ SECRET_KEY = config('SECRET_KEY', default='S#perS3crEt_1122')
 DEBUG = config('DEBUG', default=True, cast=bool)
 
 # load production server from .env
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.appseed-srv1.com', 'textmining-2307.herokuapp.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.appseed-srv1.com', 'textmining-2307.herokuapp.com', 'textmine-toiiudiscrete.herokuapp.com']
 
 # Application definition
 
