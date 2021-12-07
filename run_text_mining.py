@@ -44,6 +44,9 @@ df_title = df_title.dropna()
 df_title = df_title.to_frame().reset_index(drop = True)
 df_title = df_title[df_title.title != "title"]
 
+for i in df_title:
+    print(i)
+
 ### stopword vietnam
 f = open(stopwords, 'r',encoding="utf8")
 stopword_vn = f.read().split('\n')

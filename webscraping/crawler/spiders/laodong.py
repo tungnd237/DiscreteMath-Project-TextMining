@@ -13,7 +13,7 @@ class LaodongSpider(scrapy.Spider):
         'https://laodong.vn/the-thao/',
         'https://laodong.vn/kinh-te/',
         'https://laodong.vn/the-gioi/',
-        'https://laodong.vn/van-hoa-giai-tri/',
+        #'https://laodong.vn/van-hoa-giai-tri/',
         'https://laodong.vn/thoi-su/'
     ]
 

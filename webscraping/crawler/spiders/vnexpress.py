@@ -29,7 +29,7 @@ def get_urls(pages=30):
         "https://vnexpress.net/the-thao",
         "https://vnexpress.net/kinh-doanh",
         "https://vnexpress.net/the-gioi/",
-        "https://vnexpress.net/giai-tri/",
+        #"https://vnexpress.net/giai-tri/",
         "https://vnexpress.net/thoi-su"
     ]
 
