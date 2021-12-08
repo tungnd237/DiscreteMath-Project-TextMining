@@ -28,7 +28,7 @@ def index(request):
 
 
 def pages(request):
-    os.system('py run_text_mining.py')
+    os.system('python3 run_text_mining.py')
     context = {}
     # All resource paths end in .html.
     # Pick out the html file name from the url. And load that template.
