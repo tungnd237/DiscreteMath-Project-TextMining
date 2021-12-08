@@ -49,6 +49,4 @@ f = open(stopwords, 'r',encoding="utf8")
 stopword_vn = f.read().split('\n')
 
 ### Run graph
-#df_sample = df_title.sample(100, replace = True)
-#df_sample = df_sample.reset_index(drop=True)
 output,position=tm.remove_similar(df_title,stopword_vn,plot_original=True,plot_result=True)

@@ -17,9 +17,7 @@ def read_text_file(file_path):
 #for instance, we have words walked,walking,walks
 #with nltk package, we can revert all of them to walk
 def text2list(text,stopword,lower=True,lemma=False,stemma=False):
-
     text_clean=text if lower==False else text.lower()
-
     #tokenize and remove stop words
     token=[i for i in nltk.tokenize.RegexpTokenizer(r'\w+').tokenize(text_clean) if i not in stopword]
 
@@ -42,7 +40,6 @@ def text2list(text,stopword,lower=True,lemma=False,stemma=False):
             output.remove(i)
         except:
             pass
-
     return [i for i in output if i not in stopword]
 
 #find common words between two texts
