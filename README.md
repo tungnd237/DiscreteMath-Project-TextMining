@@ -1,0 +1,2 @@
+# DiscreteMath-Project-TextMining
+Discrete Mathematics is an important major for computer science and it is cover a large number of topics, one of which is graph theory. Our mini-project focused on applying graph theory to deploy a model that recommends newly worth-reading news and articles every day. This report goes through our introduction, mathematical background, implementation, and results of this project.
