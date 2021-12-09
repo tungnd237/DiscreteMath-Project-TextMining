@@ -185,9 +185,9 @@ def remove_similar(df, stopword, plot_original=False,
         nodecolor = []
         for i in graph.nodes:
             if i in result:
-                nodecolor.append(1)
+                nodecolor.append('#7F00FF')
             else:
-                nodecolor.append(0)
+                nodecolor.append('#000000')
 
         for i in graph.nodes:
             if i not in result:
@@ -212,7 +212,7 @@ def remove_similar(df, stopword, plot_original=False,
         nodesize = []
         for i in graph.nodes:
             if i in result:
-                nodesize.append(400)
+                nodesize.append(500)
             else:
                 nodesize.append(200)
 
