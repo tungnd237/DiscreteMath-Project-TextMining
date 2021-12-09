@@ -199,9 +199,9 @@ def recommendation(df, stopword, plot_original=False,
         nodecolor = []
         for i in graph.nodes:
             if i in recommended_articles:
-                nodecolor.append(1)
+                nodecolor.append('#7F00FF')
             else:
-                nodecolor.append(0)
+                nodecolor.append('#000000')
 
         for i in graph.nodes:
             if i not in recommended_articles:
@@ -226,7 +226,7 @@ def recommendation(df, stopword, plot_original=False,
         nodesize = []
         for i in graph.nodes:
             if i in recommended_articles:
-                nodesize.append(400)
+                nodesize.append(500)
             else:
                 nodesize.append(200)
 
