@@ -10,56 +10,70 @@ def read_text_file(file_path):
     with open(file_path, "r") as f:
         return f.read()#.encode('latin1').decode('utf16')
 
-### function
+### function for preprocessing step.
+# Since we use Vietnamese articles, the lemmatization and steamming step can be skipped.
+def preprocessing(text,stopword,lower=True,is_lemma=False,is_stemma=False):
 
-#convert text into a list of words
-#we can use stemming and lemmatization to improve efficiency
-#for instance, we have words walked,walking,walks
-#with nltk package, we can revert all of them to walk
-def text2list(text,stopword,lower=True,lemma=False,stemma=False):
     text_clean=text if lower==False else text.lower()
-    #tokenize and remove stop words
-    token=[i for i in nltk.tokenize.RegexpTokenizer(r'\w+').tokenize(text_clean) if i not in stopword]
+
+    #tokenize, remove stop words
+    token=[]
+
+    for i in nltk.tokenize.RegexpTokenizer(r'\w+').tokenize(text_clean):
+        if i not in stopword:
+            token.append(i)
 
     #lemmatization
-    if lemma:
-        text_processed=[nltk.stem.wordnet.WordNetLemmatizer().lemmatize(i) for i in token]
+    if is_lemma:
+        text_processed=[]
+        for i in token:
+            text_processed.append(nltk.stem.wordnet.WordNetLemmatizer().lemmatize(i))
     else:
         text_processed=token
 
     #stemming
-    if stemma:
-        output=[nltk.stem.PorterStemmer().stem(i) for i in text_processed]
+    if is_stemma:
+        output=[]
+        for i in text_processed:
+            output.append(nltk.stem.PorterStemmer().stem(i))
     else:
         output=text_processed
 
-    #remove numbers as they are stopword as well
-    for i in [ii for ii in output]:
+    #remove numbers since they are also stopword
+    remove_list =[]
+    for i in output:
+        remove_list.append(i)
+
+    for i in remove_list:
         try:
             float(i)
             output.remove(i)
         except:
             pass
-    return [i for i in output if i not in stopword]
 
-#find common words between two texts
+    return_list = []
+    for i in output:
+        if i not in stopword:
+            return_list.append(i)
+
+    return return_list
+
+#find common words between two titles
 #return the number of common words as the weight of the edge
-def find_common(text1,text2,stopword):
+def find_common_words(title_1,title_2,stopword):
 
-    common=set(text1).intersection(set(text2)).difference(set(stopword))
+    common=set(title_1).intersection(set(title_2)).difference(set(stopword))
 
     return len(common)
 
-#this is just a function to add one more column in dataframe
-#so the dataframe has a column which breaks texts into lists of words
-def add_wordlist(df,stopword,**kwargs):
+#add word list as an additional column.
+def add_word_column(df,stopword,**kwargs):
 
-    temp=[]
-    #display(df)
+    word_column=[]
 
     for i in df['title']:
-        temp.append(text2list(i,stopword,lower=True,**kwargs))
-    df['word']=temp
+        word_column.append(preprocessing(i,stopword,lower=True,**kwargs))
+    df['word'] = word_column
 
     return df
 
@@ -76,7 +90,7 @@ def build_graph(df, stopword):
 
     for i in range(len(df)):
         for j in range(i + 1, len(df)):
-            w = find_common(df['word'][i], df['word'][j], stopword)
+            w = find_common_words(df['word'][i], df['word'][j], stopword)
             if w != 0:
                 labeldict[i] = df['title'][i]
                 labeldict[j] = df['title'][j]
@@ -86,7 +100,7 @@ def build_graph(df, stopword):
     return graph
 
 # plotting the graph structure
-def plot_graph(graph, position, nodecolor=[], nodesize=[],
+def graph_visualization(graph, position, nodecolor=[], nodesize=[],
                nodecmap=plt.cm.copper, title=None, colorbartitle=None,
                plot_colorbar=False, **kwargs):
     if not nodecolor:
@@ -135,36 +149,36 @@ def add_non_connected(df,output,graph):
     return output
 
 #graph traversal
-def algo(graph):
+def graph_traversal(graph):
 
-    #dictionary of all nodes and degrees in graph
-    D=dict(graph.degree)
+    #dictionary of all vertices and weightes in graph
+    dict_vertex =dict(graph.degree)
 
-    #order dict by each node's degree
-    D=dict(sorted(D.items(),key=lambda x:x[1],reverse=False))
+    #order dict by each node's weight
+    dict_vertex =dict(sorted(dict_vertex.items(),key=lambda x:x[1],reverse=False))
 
-    queue=list(D.keys())
-    result=[]
+    queue=list(dict_vertex.keys())
+    recommendeded_vertices=[]
 
-    #in each iteration, find the node with the highest agree in the queue
-    #remove the node's neighbors in the queue until the queue is empty
+    #define a queue find the node with the highest agree.
+    #The iteration will run until the queue is empty.
     while queue:
 
         V=queue.pop()
-        result.append(V)
+        recommendeded_vertices.append(V)
 
         redundant=set(queue).intersection(set(graph.neighbors(V)))
 
         for i in redundant:
             queue.remove(i)
 
-    return result
+    return recommendeded_vertices
 
-#use graph theory to remove similar content
-def remove_similar(df, stopword, plot_original=False,
+#use graph theory to pick highlighted content
+def recommendation(df, stopword, plot_original=False,
                    plot_result=False,**kwargs):
     # tokenization
-    df = add_wordlist(df, stopword, **kwargs)
+    df = add_word_column(df, stopword, **kwargs)
 
     # graph building
     graph = build_graph(df, stopword, **kwargs)
@@ -174,23 +188,23 @@ def remove_similar(df, stopword, plot_original=False,
 
     # plot original
     if plot_original:
-        plot_graph(graph, position=pos,
+        graph_visualization(graph, position=pos,
                    title='Original', **kwargs)
 
-    # traversal
-    result = algo(graph)
+    # traversal to get the recommended vertices/ articles
+    recommended_articles = graph_traversal(graph)
 
     # plot result, highlight the result
     if plot_result:
         nodecolor = []
         for i in graph.nodes:
-            if i in result:
+            if i in recommended_articles:
                 nodecolor.append(1)
             else:
                 nodecolor.append(0)
 
         for i in graph.nodes:
-            if i not in result:
+            if i not in recommended_articles:
                 labeldict.pop(i)
 
         def find_key(val):
@@ -211,20 +225,20 @@ def remove_similar(df, stopword, plot_original=False,
 
         nodesize = []
         for i in graph.nodes:
-            if i in result:
+            if i in recommended_articles:
                 nodesize.append(400)
             else:
                 nodesize.append(200)
 
-        plot_graph(graph, position=pos, nodecolor=nodecolor,
+        graph_visualization(graph, position=pos, nodecolor=nodecolor,
                    nodesize=nodesize, title='Graph Theory Result', **kwargs)
 
 
     # exclusive content may share no common words with others
     # we still need the last puzzle to get the output
-    output = add_non_connected(df, result, graph)
+    output = add_non_connected(df, recommended_articles, graph)
 
-    # return the selected nodes in a dataframe format
+    # return the selected articles in a dataframe format
     data = df.loc[[i for i in set(output)]]
     data.reset_index(inplace=True, drop=True)
     del data['word']

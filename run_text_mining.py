@@ -49,4 +49,4 @@ f = open(stopwords, 'r',encoding="utf8")
 stopword_vn = f.read().split('\n')
 
 ### Run graph
-output,position=tm.remove_similar(df_title,stopword_vn,plot_original=True,plot_result=True)
+output,position=tm.recommendation(df_title,stopword_vn,plot_original=True,plot_result=True)
