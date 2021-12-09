@@ -30,6 +30,8 @@ def index(request):
 def pages(request):
     os.system('python3 run_text_mining.py')
     context = {}
+    my_data = pd.read_csv('Results.csv', encoding="utf-16", error_bad_lines=False)
+    my_data.to_html("apps/templates/includes/result.html")
     # All resource paths end in .html.
     # Pick out the html file name from the url. And load that template.
     try:
